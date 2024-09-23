@@ -10,7 +10,7 @@ window.onload = async () => {
     ]);
     fillTableWithData(munPopData, employData);
   } catch (error) {
-      console.error(`Data loading failed: ${error.message}`);
+    console.error(`Data loading failed: ${error.message}`);
   }
 };
 
@@ -33,21 +33,24 @@ async function fetchJsonData(url) {
 }
 
 function fillTableWithData(munPopData, employData) {
-  const municipality = munPopData.dataset.dimension.Alue.category.label;
-  const population = munPopData.dataset.value;
-  const employment = employData.dataset.value;
-  let tRowArray = new Array();
-  Object.values(municipality).forEach((mun, index) => {
-    const curPop = population[index];
-    const curEmp = employment[index];
-    const employRate = curEmp / curPop;
-    const roundedEmployRate = (employRate * 100).toFixed(2);
-    let tRow = createTableRowElem(mun, curPop, curEmp, `${roundedEmployRate}%`);
-    if (employRate > 0.45) tRow.style.backgroundColor = "#abffbd";
-    else if (employRate < 0.25) tRow.style.backgroundColor = "#ff9e9e";
-    tRowArray.push(tRow);
+  const { label: municipalities } = munPopData.dataset.dimension.Alue.category;
+  const populations = munPopData.dataset.value;
+  const employments = employData.dataset.value;
+  Object.values(municipalities).forEach((municipality, index) => {
+    const population = populations[index];
+    const employment = employments[index];
+    const employmentRate = (employment / population) * 100;
+    const roundedEmployRate = employmentRate.toFixed(2);
+    const tRow = createTableRowElem(
+      municipality,
+      population,
+      employment,
+      `${roundedEmployRate}%`
+    );
+    if (employmentRate > 45) tRow.style.backgroundColor = "#abffbd";
+    else if (employmentRate < 25) tRow.style.backgroundColor = "#ff9e9e";
+    document.querySelector("tbody").appendChild(tRow);
   });
-  document.querySelector("tbody").append(...tRowArray);
 }
 
 function createTableRowElem(...textArgs) {
@@ -56,6 +59,6 @@ function createTableRowElem(...textArgs) {
     const tCol = document.createElement("td");
     tCol.innerText = text;
     tRow.appendChild(tCol);
-  })
+  });
   return tRow;
 }
