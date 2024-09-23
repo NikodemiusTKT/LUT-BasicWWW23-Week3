@@ -52,10 +52,10 @@ function fillTableWithData(munPopData, employData) {
 
 function createTableRowElem(...textArgs) {
   let tRow = document.createElement("tr");
-  for (let arg of textArgs) {
-    let tCol = document.createElement("td");
-    tCol.innerText = arg;
-    tRow.append(tCol);
-  }
+  textArgs.forEach((text) => {
+    const tCol = document.createElement("td");
+    tCol.innerText = text;
+    tRow.appendChild(tCol);
+  })
   return tRow;
 }
