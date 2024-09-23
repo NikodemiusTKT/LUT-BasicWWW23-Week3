@@ -27,24 +27,34 @@ async function fetchJsonData(url) {
 }
 
 function fillTableWithData(munPopData, employData) {
-  const { label: municipalities } = munPopData.dataset.dimension.Alue.category;
+  const  municipalities = Object.values(munPopData.dataset.dimension.Alue.category.label);
   const populations = munPopData.dataset.value;
   const employments = employData.dataset.value;
-  Object.values(municipalities).forEach((municipality, index) => {
-    const population = populations[index];
-    const employment = employments[index];
-    const employmentRate = (employment / population) * 100;
-    const roundedEmployRate = employmentRate.toFixed(2);
+  // Create document fragment to accumulate rows
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < municipalities.length; i++) {
+    const employmentRate = calculateEmploymentRate(employments[i], populations[i]);
     const tRow = createTableRowElem(
-      municipality,
-      population,
-      employment,
-      `${roundedEmployRate}%`
+      municipalities[i],
+      populations[i],
+      employments[i],
+      `${employmentRate}%`
     );
-    if (employmentRate > 45) tRow.style.backgroundColor = "#abffbd";
-    else if (employmentRate < 25) tRow.style.backgroundColor = "#ff9e9e";
-    document.querySelector("tbody").appendChild(tRow);
-  });
+    styleTableRow(tRow, employmentRate);
+    fragment.appendChild(tRow);
+    
+  }
+  document.querySelector('tbody').appendChild(fragment);
+}
+
+function calculateEmploymentRate(employment, population) {
+  // Calculate employment rate as percentage
+  return ((employment / population ) * 100).toFixed(2);
+}
+
+function styleTableRow(row, employmentRate) {
+  if (employmentRate > 45) row.style.backgroundColor = "#abffbd";
+  else if (employmentRate < 25) row.style.backgroundColor = "#ff9e9e";
 }
 
 function createTableRowElem(...textArgs) {
