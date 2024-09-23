@@ -53,11 +53,13 @@ function calculateEmploymentRate(employment, population) {
 }
 
 function styleTableRow(row, employmentRate) {
+  // Apply conditional styling to the row based on the employmentRate
   if (employmentRate > 45) row.style.backgroundColor = "#abffbd";
   else if (employmentRate < 25) row.style.backgroundColor = "#ff9e9e";
 }
 
 function createTableRowElem(...textArgs) {
+  // Create table row elements from variable length of arguments using spread operator
   let tRow = document.createElement("tr");
   textArgs.forEach((text) => {
     const tCol = document.createElement("td");
